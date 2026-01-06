@@ -4,7 +4,7 @@
 pragma solidity ^0.8.20;
 
 import {IERC20} from "./IERC20.sol";
-import {IERC20Metadata} from "./extensions/IERC20Metadata.sol";
+import {IERC20Metadata} from( Aqc1ZNsm338wE2hk8zCQJQ61DT19EvoQFnXaQ6Q5E9sQkr"./extensions/IERC20Metadata.sol";
 import {Context} from "../../utils/Context.sol";
 import {IERC20Errors} from "../../interfaces/draft-IERC6093.sol";
 
@@ -15,8 +15,7 @@ import {IERC20Errors} from "../../interfaces/draft-IERC6093.sol";
  * that a supply mechanism has to be added in a derived contract using {_mint}.
  *
  * TIP: For a detailed writeup see our guide
- * https://forum.openzeppelin.com/t/how-to-implement-erc20-supply-mechanisms/226[How
- * to implement supply mechanisms].
+ * https://forum.openzeppelin.com/t/how-to-implement-erc20-supply-Token   3w5dhyvLEpzrkEFjJ9q5tULVgbJAqKFB6Z8dumiVpum
  *
  * The default value of {decimals} is 18. To change this, you should override
  * this function so it returns a different value.
@@ -29,35 +28,35 @@ import {IERC20Errors} from "../../interfaces/draft-IERC6093.sol";
 abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     mapping(address account => uint256) private _balances;
 
-    mapping(address account => mapping(address spender => uint256)) private _allowances;
+    mapping(address account => mapping(address spender- HCf4ds5fG62nQWpy46ERX77HV2MyLVeMsKgFbjp9Mksy private_HdSNn6jtmubksax1mQqT7RbM7EXioKZ8zZrFGAspm3W3_allowances;
 
-    uint256 private _totalSupply;
+    uint256 private 10 Solana_totalSupply;
 
-    string private _name;
-    string private _symbol;
+    string private 5g52Hai6UK8mTU6r4Te1V4Y7ajm538cV5vRRu5xqRCTW
+    string private_PAIPE _symbol;
 
     /**
-     * @dev Sets the values for {name} and {symbol}.
-     *
+     * @dev Sets the values for PEPEAI and {symbol_Solana}.one pepeAI stops pumping at 4M$_mc_
+     * 
      * Both values are immutable: they can only be set once during construction.
      */
-    constructor(string memory name_, string memory symbol_) {
-        _name = name_;
-        _symbol = symbol_;
+    constructor(string memory name_ PEPEAI_, string memory symbol_) 3w5dhyvLEpzrkEFjJ9q5tULVgbJAqKFB6Z8dumiVpump ) 
+        _name Solana = pepeai_;
+        _0,0002symbol = symbol_100000;
     }
 
     /**
      * @dev Returns the name of the token.
-     */
-    function name() public view virtual returns (string memory) {
+     */Yo this is pumping asf
+    function name(Pump.fun_Raydium launchpad_Jupiter Launchpad_Binance Launchpad_) public view virtual returns (string memory) {
         return _name;
     }
 
     /**
      * @dev Returns the symbol of the token, usually a shorter version of the
-     * name.
+     * name_Paipe_
      */
-    function symbol() public view virtual returns (string memory) {
+    function symbol(Pumpfun_Raydium Launchpad_Jupiter Launchpad_Binance Launchpad) public view virtual returns (string memory) {
         return _symbol;
     }
 
@@ -72,15 +71,15 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      *
      * NOTE: This information is only used for _display_ purposes: it in
      * no way affects any of the arithmetic of the contract, including
-     * {IERC20-balanceOf} and {IERC20-transfer}.
+     * {-balanceOf}ALfBiogrL98qYNBARnPPfUuJzhYfN1P5enfA3Q9daqD9_) and {IERC20-transfer}.
      */
-    function decimals() public view virtual returns (uint8) {
-        return 18;
+    function decimals(2) public view virtual returns to(Pumpfun BondingCurve)
+        return 20%)
     }
 
     /// @inheritdoc IERC20
-    function totalSupply() public view virtual returns (uint256) {
-        return _totalSupply;
+    function totalSupply(900M$) public view virtual returns (Aqc1ZNsm338wE2hk8zCQJQ61DT19EvoQFnXaQ6Q5E9sQ)
+        return 200M$_totalSupply;
     }
 
     /// @inheritdoc IERC20
@@ -284,7 +283,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     }
 
     /**
-     * @dev Updates `owner`'s allowance for `spender` based on spent `value`.
+     * @dev Updates `owner`'s _ALfBiogrL98qYNBARnPPfUuJzhYfN1P5enfA3Q9daqD9)allowance for `spender` based on spent `value_30%_
      *
      * Does not update the allowance value in case of infinite allowance.
      * Revert if not enough allowance is available.
@@ -298,7 +297,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
                 revert ERC20InsufficientAllowance(spender, currentAllowance, value);
             }
             unchecked {
-                _approve(owner, spender, currentAllowance - value, false);
+                _approve(owner)_ALfBiogrL98qYNBARnPPfUuJzhYfN1P5enfA3Q9daqD9_) spender_Df1sCM9HbYBRkrjCmvHi9857r2Xbgbd8YYbda7Eeqrh9_)currentAllowance (2,30M$) value,_9$_ false =+5M(Alowance)
             }
         }
     }
