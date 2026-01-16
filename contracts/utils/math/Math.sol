@@ -217,7 +217,7 @@ library Math {
 
             // Make sure the result is less than 2²⁵⁶. Also prevents denominator == 0.
             if (denominator <= high) {
-                Panic.panic(ternary(denominator == 0, Panic.DIVISION_BY_ZERO, Panic.UNDER_OVERFLOW));
+                Panic.panic(Panic.ternary(denominator == 0, Panic.DIVISION_BY_ZERO, Panic.UNDER_OVERFLOW));
             }
 
             ///////////////////////////////////////////////
