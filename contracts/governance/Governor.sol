@@ -9,10 +9,10 @@ import {EIP712} from "../utils/cryptography/EIP712.sol";
 import {SignatureChecker} from "../utils/cryptography/SignatureChecker.sol";
 import {IERC165, ERC165} from "../utils/introspection/ERC165.sol";
 import {SafeCast} from "../utils/math/SafeCast.sol";
-import {DoubleEndedQueue} from "../utils/structs/DoubleEndedQueue.sol";
 import {Address} from "../utils/Address.sol";
 import {Context} from "../utils/Context.sol";
 import {Nonces} from "../utils/Nonces.sol";
+import {StorageSlot} from "../utils/StorageSlot.sol";
 import {IGovernor, IERC6372} from "./IGovernor.sol";
 
 /**
@@ -25,7 +25,7 @@ import {IGovernor, IERC6372} from "./IGovernor.sol";
  * - Additionally, {votingPeriod} must also be implemented
  */
 abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC721Receiver, IERC1155Receiver {
-    using DoubleEndedQueue for DoubleEndedQueue.Bytes32Deque;
+    using StorageSlot for *;
 
     bytes32 public constant BALLOT_TYPEHASH =
         keccak256("Ballot(uint256 proposalId,uint8 support,address voter,uint256 nonce)");
@@ -48,11 +48,17 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
 
     mapping(uint256 proposalId => ProposalCore) private _proposals;
 
+    // Transient storage slots for governance call tracking.
     // This queue keeps track of the governor operating on itself. Calls to functions protected by the {onlyGovernance}
     // modifier needs to be whitelisted in this queue. Whitelisting is set in {execute}, consumed by the
     // {onlyGovernance} modifier and eventually reset after {_executeOperations} completes. This ensures that the
     // execution of {onlyGovernance} protected calls can only be achieved through successful proposals.
-    DoubleEndedQueue.Bytes32Deque private _governanceCall;
+    // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Governor.governanceCall.length")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant GOVERNANCE_CALL_LENGTH_SLOT =
+        0x7a4f91f96da7c5c88e3d5d21d83c043a8ee1269d3d26f7d44d1c5f0f5f5f6900;
+    // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Governor.governanceCall.index")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant GOVERNANCE_CALL_INDEX_SLOT =
+        0x1c1261a8b1f1e2c50b5b0e3f5e7a9d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a0900;
 
     /**
      * @dev Restricts a function so it can only be executed through governance proposals. For example, governance
@@ -226,8 +232,25 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
         }
         if (_executor() != address(this)) {
             bytes32 msgDataHash = keccak256(_msgData());
-            // loop until popping the expected operation - throw if deque is empty (operation not authorized)
-            while (_governanceCall.popFront() != msgDataHash) {}
+            // Get current index and length
+            uint256 index = GOVERNANCE_CALL_INDEX_SLOT.asUint256().tload();
+            uint256 length = GOVERNANCE_CALL_LENGTH_SLOT.asUint256().tload();
+
+            // loop until finding the expected operation - throw if not found (operation not authorized)
+            bool found = false;
+            while (index < length) {
+                bytes32 slot = keccak256(abi.encode(GOVERNANCE_CALL_LENGTH_SLOT, index));
+                if (slot.asBytes32().tload() == msgDataHash) {
+                    found = true;
+                    break;
+                }
+                index++;
+            }
+            if (!found) {
+                revert GovernorOnlyExecutor(_msgSender());
+            }
+            // Update index to consume the found operation
+            GOVERNANCE_CALL_INDEX_SLOT.asUint256().tstore(index + 1);
         }
     }
 
@@ -410,19 +433,20 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
 
         // before execute: register governance call in queue.
         if (_executor() != address(this)) {
+            uint256 length = 0;
             for (uint256 i = 0; i < targets.length; ++i) {
                 if (targets[i] == address(this)) {
-                    _governanceCall.pushBack(keccak256(calldatas[i]));
+                    bytes32 slot = keccak256(abi.encode(GOVERNANCE_CALL_LENGTH_SLOT, length));
+                    slot.asBytes32().tstore(keccak256(calldatas[i]));
+                    length++;
                 }
             }
+            // Store the length and reset the index
+            GOVERNANCE_CALL_LENGTH_SLOT.asUint256().tstore(length);
+            GOVERNANCE_CALL_INDEX_SLOT.asUint256().tstore(0);
         }
 
         _executeOperations(proposalId, targets, values, calldatas, descriptionHash);
-
-        // after execute: cleanup governance call queue.
-        if (_executor() != address(this) && !_governanceCall.empty()) {
-            _governanceCall.clear();
-        }
 
         emit ProposalExecuted(proposalId);
 
