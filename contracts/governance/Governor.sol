@@ -53,6 +53,9 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
     // modifier needs to be whitelisted in this queue. Whitelisting is set in {execute}, consumed by the
     // {onlyGovernance} modifier and eventually reset after {_executeOperations} completes. This ensures that the
     // execution of {onlyGovernance} protected calls can only be achieved through successful proposals.
+    // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Governor.governanceCall.queue")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant GOVERNANCE_CALL_QUEUE_SLOT =
+        0xf3b99d16e32cf1af729e34d11136ec7c2305a2f0e714f6752d991577bd034400;
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Governor.governanceCall.length")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant GOVERNANCE_CALL_LENGTH_SLOT =
         0xdb1a092545c5a92b884894d120ab0cc2849badb9ce81e9fa42ffe95d17298700;
@@ -239,7 +242,7 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
             // loop until finding the expected operation - throw if not found (operation not authorized)
             bool found = false;
             while (index < length) {
-                bytes32 slot = keccak256(abi.encode(GOVERNANCE_CALL_LENGTH_SLOT, index));
+                bytes32 slot = keccak256(abi.encode(GOVERNANCE_CALL_QUEUE_SLOT, index));
                 if (slot.asBytes32().tload() == msgDataHash) {
                     found = true;
                     break;
@@ -436,7 +439,7 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
             uint256 length = 0;
             for (uint256 i = 0; i < targets.length; ++i) {
                 if (targets[i] == address(this)) {
-                    bytes32 slot = keccak256(abi.encode(GOVERNANCE_CALL_LENGTH_SLOT, length));
+                    bytes32 slot = keccak256(abi.encode(GOVERNANCE_CALL_QUEUE_SLOT, length));
                     slot.asBytes32().tstore(keccak256(calldatas[i]));
                     length++;
                 }
