@@ -55,10 +55,10 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
     // execution of {onlyGovernance} protected calls can only be achieved through successful proposals.
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Governor.governanceCall.length")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant GOVERNANCE_CALL_LENGTH_SLOT =
-        0x7a4f91f96da7c5c88e3d5d21d83c043a8ee1269d3d26f7d44d1c5f0f5f5f6900;
+        0xdb1a092545c5a92b884894d120ab0cc2849badb9ce81e9fa42ffe95d17298700;
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Governor.governanceCall.index")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant GOVERNANCE_CALL_INDEX_SLOT =
-        0x1c1261a8b1f1e2c50b5b0e3f5e7a9d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a0900;
+        0x7d14489ca0cba5173e2e3129c88ebd2b71967e6048400d82f05e13aac5b53e00;
 
     /**
      * @dev Restricts a function so it can only be executed through governance proposals. For example, governance
